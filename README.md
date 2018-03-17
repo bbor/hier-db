@@ -1,6 +1,6 @@
 # mix-db
 
-An minimalist, indexed hierarchical data structure, used by the [typesmith](https://www.github.com/bbor/typesmith) and [mixtape](https://www.github.com/bbor/mixtape) projects.
+A minimalist, indexed hierarchical data structure, used by the [typesmith](https://www.github.com/bbor/typesmith) and [mixtape](https://www.github.com/bbor/mixtape) projects.
 
 ## Usage
 
@@ -45,17 +45,21 @@ var top_level = db.children_of(db.root);
 
 ## Structure
 
-The database holds individual data records, each of which is a JavaScript object that must contain at minimum a `name` string. It can also contain any other keys and values you want.
+The mix-db holds multiple data records, each of which is a JavaScript object that must contain at minimum a `name` string. Each data object can also contain any other keys and values you want.
 
 ### UIDs
 
-For speedy lookups, each record you add to the database is indexed by a unique ID. You can create these UIDs yourself and store them in your data objects. If you add a record that doesn't already have a UID, `mix-db` will create one for you and save it on that record.
+For speedy lookups, each record you add to the database is indexed by a unique ID. You can create these UIDs yourself in advance and store them in your data objects, in the `uid` property. If you add a record that doesn't already have a UID, `mix-db` will create one for you and save it on that record.
+
+You can access records by their indexed UIDs using `.index[uid]`.
+
+The auto-generated UID uses the object's `name` value. If that value is already used as a UID, it will append the object's `type` value to disambiguate the new record (see the `disambiguate_by` configuration setting below). If that doesn't produce a unique value, a numeric suffix is incremented and appended.
 
 ### Children and parents
 
-Each record in the database can have any number of children, and any number of parents. This allows a given item to exist in multiple places within the hierarchy.
+Each record in the database can have any number of children, and any number of parents. Note that this allows a given item to exist in multiple places within the hierarchy, unlike many tree implementations.
 
-Internally, parent and child lists are stored as UIDs. This allows the database to be written out (e.g. to JSON) and read back in without duplicating any records, keeping the same parent-child relationships intact, even when a single record has multiple parents.
+Also, the parent and child lists contain the UIDs of the other records, not references to the actual data objects. This allows the database to be written out (e.g. to JSON) and read back in without causing any records to get duplicated. The same parent-child relationships remain intact, even when a single record has multiple parents.
 
 ## Configuration settings
 
@@ -73,7 +77,7 @@ The defaults are:
 
   So, say you add the record `{'name':'log','type':'object'}`, it gets the UID `log`. Then, if you add another record that is `{'name':'log','type':'function'}`, the new record gets the UID `log_function`.
 
-For example:
+An example of how to create a `mix-db` object with a different set of keys:
 
 ```js
 var config = {
@@ -90,11 +94,27 @@ var db = mixDb(config);
 
 ## Properties
 
+Every instance of `mix-db` has the following properties.
+
 ### .index
+
+The index is an object in which every key is the UID of a stored data record, and the value of each key is the data record with that UID.
+
+So, you can get quick access to any record by calling `mixDb.index['my_uid_string']`.
 
 ### .root
 
+The root is a special object that represents the ultimate top object in the hierarchy of parents and children. Any data object that you add to the `mix-db` automatically becomes a child of the `.root` object, unless you provide a different parent at the time you add the record.
+
+The root has a special ID of `root`.
+
+So, you can get all the top-level items that aren't children of other items by calling `mixDb.children_of(mixDb.root)`, or `mixDb.children_of('root')`.
+
+Note that the root is *not* accessible through the `.index`, as it's not a real data record; it's just a way to identify the top of the hierarchy.
+
 ### .config
+
+The `.config` object stores the current configuration of the `mix-db` object. This is its default values, overridden by whatever configuration options you provided when you created the `mix-db` object. It's best not to change any of these configuration values after you start adding records.
 
 ## API
 
@@ -108,7 +128,8 @@ Adds one or more new records to the database.
   - a single data object that has a `name` field.
   - a string. A new object will be created with that string as its name.
   - an array of the above. Each item is added as a separate new record.
-- If you provide a parent, the new record or records will get added under that parent. The parent parameter can be either the uid of another record, or the record itself. If you provide a parent, and it isn't already in the database, the parenting will fail. Any parents or children that are already present in the new record are kept.
+- If the new item already has something in its `parents` property, that value will be kept as-is.
+  Otherwise, by default the new item's parent list is set to `['root']` (see `.root` above). You can prevent this by providing a `parent` parameter to specify what record the new record or records should get put under. The `parent` parameter can be either the uid of another record, or the record itself. If you provide a parent that isn't already in the database, the parenting will fail.
 
 ### .remove (records, promote_orphans)
 
@@ -131,11 +152,11 @@ Removes the parent-child relationship between the two specified records, if any 
 
 ### .children_of (record)
 
-Returns the array of all children under the specified record.
+Returns the array of all children under the specified record. This function returns the actual data objects, not just the UIDs stored in the `.children` property.
 
 ### .parents_of (record)
 
-Returns an array of all parents that own the specified record.
+Returns an array of all parents that own the specified record. This function returns the actual data objects, not just the UIDs stored in the `.parent` property.
 
 ### .filter (predicate)
 
