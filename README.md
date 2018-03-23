@@ -1,6 +1,6 @@
 # mix-db
 
-An minimalist, indexed hierarchical data structure, used by the [typesmith](https://www.github.com/bbor/typesmith) and [mixtape](https://www.github.com/bbor/mixtape) projects.
+A minimalist, indexed hierarchical data structure, used by the [typesmith](https://www.github.com/bbor/typesmith) and [mixtape](https://www.github.com/bbor/mixtape) projects.
 
 ## Usage
 
@@ -41,7 +41,7 @@ var all_records = db.all();
 // Get all records at the topmost level of the hierarchy: i.e. records without other parents
 var top_level = db.children_of(db.root);
 
-``` 
+```
 
 ## Structure
 
@@ -92,9 +92,29 @@ var db = mixDb(config);
 
 ### .index
 
+The `.index` property is an object that makes all data records accessible by their UID. Use it for fast lookups, even on really big databases. For example:
+
+```
+var myObject = db.index['object_uid'];
+```
+
 ### .root
 
+The `.root` property is a special object that acts as the top-level parent in the hierarchy of parent-child records.
+
+You can use it to retrieve all the top-level items that have no other parent.
+
+```
+var topLevelItems = db.children_of(db.root);
+-- or
+var topLevelItems = db.children_of('root');
+```
+
 ### .config
+
+The `.config` property stores the current set of options being used by the database. It's constructed from default settings, overlaid by the settings you pass in when you create the `mix-db` object (if any). See the [Configuration settings](#configuration-settings) section above.
+
+>	**NOTE:** Don't change these values after you start adding items to the database!
 
 ## API
 
