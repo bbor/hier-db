@@ -1,6 +1,6 @@
 {
   "name": "hier-db",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An indexed hierarchical data structure, used by typesmith and mixtape.",
   "main": "lib/hier-db.js",
   "scripts": {
