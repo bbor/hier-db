@@ -1,21 +1,21 @@
 {
-  "name": "mix-db",
+  "name": "hier-db",
   "version": "1.0.0",
   "description": "An indexed hierarchical data structure, used by typesmith and mixtape.",
-  "main": "lib/mix-db.js",
+  "main": "lib/hier-db.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bbor/mix-db.git"
+    "url": "git+https://github.com/bbor/hier-db.git"
   },
   "author": "Robb Surridge",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bbor/mix-db/issues"
+    "url": "https://github.com/bbor/hier-db/issues"
   },
-  "homepage": "https://github.com/bbor/mix-db#readme",
+  "homepage": "https://github.com/bbor/hier-db#readme",
   "dependencies": {
     "lodash": "^4.17.5"
   }

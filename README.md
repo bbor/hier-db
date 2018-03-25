@@ -1,14 +1,14 @@
-# mix-db
+# hier-db
 
 A minimalist, indexed hierarchical data structure, used by the [typesmith](https://www.github.com/bbor/typesmith) and [mixtape](https://www.github.com/bbor/mixtape) projects.
 
 ## Usage
 
 ```js
-var mixDb = require('mix-db');
+var hierDb = require('hier-db');
 
 // Create a new database
-var db = mixDb();
+var db = hierDb();
 
 // Add records to the database:
 db.add(record_1);
@@ -45,11 +45,11 @@ var top_level = db.children_of(db.root);
 
 ## Structure
 
-The mix-db holds multiple data records, each of which is a JavaScript object that must contain at minimum a `name` string. Each data object can also contain any other keys and values you want.
+The hier-db holds multiple data records, each of which is a JavaScript object that must contain at minimum a `name` string. Each data object can also contain any other keys and values you want.
 
 ### UIDs
 
-For speedy lookups, each record you add to the database is indexed by a unique ID. You can create these UIDs yourself in advance and store them in your data objects, in the `uid` property. If you add a record that doesn't already have a UID, `mix-db` will create one for you and save it on that record.
+For speedy lookups, each record you add to the database is indexed by a unique ID. You can create these UIDs yourself in advance and store them in your data objects, in the `uid` property. If you add a record that doesn't already have a UID, `hier-db` will create one for you and save it on that record.
 
 You can access records by their indexed UIDs using `.index[uid]`.
 
@@ -63,7 +63,7 @@ Also, the parent and child lists contain the UIDs of the other records, not refe
 
 ## Configuration settings
 
-The `mix-db` structure makes some assumptions about what properties will be used to store the various items of information it needs about each record. For example, each record's UID is stored by default in the `uid` key of that object.
+The `hier-db` structure makes some assumptions about what properties will be used to store the various items of information it needs about each record. For example, each record's UID is stored by default in the `uid` key of that object.
 
 If any of these default keys conflict with data that you're storing in your objects for other reasons, you can configure the keys used for these fields.
 
@@ -77,7 +77,7 @@ The defaults are:
 
   So, say you add the record `{'name':'log','type':'object'}`, it gets the UID `log`. Then, if you add another record that is `{'name':'log','type':'function'}`, the new record gets the UID `log_function`.
 
-An example of how to create a `mix-db` object with a different set of keys:
+An example of how to create a `hier-db` object with a different set of keys:
 
 ```js
 var config = {
@@ -88,13 +88,13 @@ var config = {
   'disambiguate_by':['alternate','keys']
 }
 
-var db = mixDb(config);
+var db = hierDb(config);
 ```
 
 
 ## Properties
 
-Every instance of `mix-db` has the following properties.
+Every instance of `hier-db` has the following properties.
 
 ### .index
 
@@ -120,7 +120,7 @@ Note that the root is not stored in the `.index` object, as it is not a "real" d
 
 ### .config
 
-The `.config` property stores the current set of options being used by the database. It's constructed from default settings, overlaid by the settings you pass in when you create the `mix-db` object (if any). See the [Configuration settings](#configuration-settings) section above.
+The `.config` property stores the current set of options being used by the database. It's constructed from default settings, overlaid by the settings you pass in when you create the `hier-db` object (if any). See the [Configuration settings](#configuration-settings) section above.
 
 >	**NOTE:** Don't change these values after you start adding items to the database!
 
