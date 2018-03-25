@@ -116,6 +116,8 @@ var topLevelItems = db.children_of(db.root);
 var topLevelItems = db.children_of('root');
 ```
 
+Note that the root is not stored in the `.index` object, as it is not a "real" data record, just a placeholder for the top of the hierarchy.
+
 ### .config
 
 The `.config` property stores the current set of options being used by the database. It's constructed from default settings, overlaid by the settings you pass in when you create the `mix-db` object (if any). See the [Configuration settings](#configuration-settings) section above.
