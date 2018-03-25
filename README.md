@@ -41,7 +41,7 @@ var all_records = db.all();
 // Get all records at the topmost level of the hierarchy: i.e. records without other parents
 var top_level = db.children_of(db.root);
 
-``` 
+```
 
 ## Structure
 
@@ -98,23 +98,29 @@ Every instance of `mix-db` has the following properties.
 
 ### .index
 
-The index is an object in which every key is the UID of a stored data record, and the value of each key is the data record with that UID.
+The `.index` property is an object that makes all data records accessible by their UID. Use it for fast lookups, even on really big databases. For example:
 
-So, you can get quick access to any record by calling `mixDb.index['my_uid_string']`.
+```
+var myObject = db.index['object_uid'];
+```
 
 ### .root
 
-The root is a special object that represents the ultimate top object in the hierarchy of parents and children. Any data object that you add to the `mix-db` automatically becomes a child of the `.root` object, unless you provide a different parent at the time you add the record.
+The `.root` property is a special object that acts as the top-level parent in the hierarchy of parent-child records.
 
-The root has a special ID of `root`.
+You can use it to retrieve all the top-level items that have no other parent.
 
-So, you can get all the top-level items that aren't children of other items by calling `mixDb.children_of(mixDb.root)`, or `mixDb.children_of('root')`.
-
-Note that the root is *not* accessible through the `.index`, as it's not a real data record; it's just a way to identify the top of the hierarchy.
+```
+var topLevelItems = db.children_of(db.root);
+-- or
+var topLevelItems = db.children_of('root');
+```
 
 ### .config
 
-The `.config` object stores the current configuration of the `mix-db` object. This is its default values, overridden by whatever configuration options you provided when you created the `mix-db` object. It's best not to change any of these configuration values after you start adding records.
+The `.config` property stores the current set of options being used by the database. It's constructed from default settings, overlaid by the settings you pass in when you create the `mix-db` object (if any). See the [Configuration settings](#configuration-settings) section above.
+
+>	**NOTE:** Don't change these values after you start adding items to the database!
 
 ## API
 
